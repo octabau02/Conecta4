@@ -1,13 +1,18 @@
 package com.juego.modelo;
 
+import java.awt.*;
+
 public class Tablero {
     private final int FILAS = 6;
     private final int COLUMNAS = 7;
 
-    private Ficha[][] celdas;
+    private Color[][] celdas;
 
+    /**
+     * constructor para poner las celdas del tablero en nulas
+     */
     public Tablero(){
-        this.celdas = new Ficha[FILAS][COLUMNAS];
+        this.celdas = new Color[FILAS][COLUMNAS];
 
         for(int f = 0; f< FILAS; f++){
             for(int c = 0; c< COLUMNAS; c++){
@@ -26,7 +31,14 @@ public class Tablero {
         }
     }
 
-    public int colocarFicha(Ficha colorFicha, int columna){
+    /**
+     *metodo que recibe un color y columna para colocar una ficha,
+     * donde se compara que sea una posicion valida y haya lugar disponible
+     * @param colorFicha
+     * @param columna
+     * @return
+     */
+    public int colocarFicha(Color colorFicha, int columna){
 
         if(columna < 0 || columna >= COLUMNAS){
             System.out.println("Columna no valida");
@@ -43,59 +55,79 @@ public class Tablero {
         return 0;
     }
 
-    public boolean hayGanador(){
-        if (hayGanadorEnHorizontal() || hayGanadorEnVertical() || hayGanadorEnDiagonal()){
-            return true;
+    /**
+     * metodo que retorna el color de un ganador en caso de haberlo
+     * @return
+     */
+    public Color hayGanador(){
+        Color colorGanador;
+
+        if((colorGanador = hayGanadorEnVertical()) != null){
+            return colorGanador;
         }
-        return false;
+        if((colorGanador = hayGanadorEnHorizontal()) != null){
+            return colorGanador;
+        }
+        if((colorGanador = hayGanadorEnDiagonal()) != null){
+            return colorGanador;
+        }
+
+        return null;
     }
 
-    private boolean hayGanadorEnHorizontal() {
+    //metodo paar revisar si hay ganador
+    private Color hayGanadorEnHorizontal() {
         for (int fila = 0; fila < FILAS; fila++) {
             for (int columna = 0; columna <= COLUMNAS - 4; columna++) {
-                Ficha ficha = celdas[fila][columna];
+                Color ficha = celdas[fila][columna];
                 if (ficha != null && ficha.equals(celdas[fila][columna + 1]) &&
                         ficha.equals(celdas[fila][columna + 2]) && ficha.equals(celdas[fila][columna + 3])) {
-                    return true;
+                    return ficha;
                 }
             }
         }
-        return false;
+        return null;
     }
 
-    private boolean hayGanadorEnVertical() {
+    //metodo paar revisar si hay ganador
+    private Color hayGanadorEnVertical() {
         for (int fila = 0; fila <= FILAS - 4; fila++) {
             for (int columna = 0; columna < COLUMNAS; columna++) {
-                Ficha ficha = celdas[fila][columna];
+                Color ficha = celdas[fila][columna];
                 if (ficha != null && ficha.equals(celdas[fila + 1][columna]) &&
                         ficha.equals(celdas[fila + 2][columna]) && ficha.equals(celdas[fila + 3][columna])) {
-                    return true;
+
+                    return ficha;
                 }
             }
         }
-        return false;
+        return null;
     }
 
-    private boolean hayGanadorEnDiagonal() {
+    //metodo paar revisar si hay ganador
+    private Color hayGanadorEnDiagonal() {
         // Verificar diagonales hacia la derecha y hacia la izquierda
         for (int fila = 0; fila <= FILAS - 4; fila++) {
             for (int columna = 0; columna <= COLUMNAS - 4; columna++) {
                 // Diagonal hacia la derecha
                 if (celdas[fila][columna] != null && celdas[fila][columna].equals(celdas[fila + 1][columna + 1]) &&
                         celdas[fila][columna].equals(celdas[fila + 2][columna + 2]) && celdas[fila][columna].equals(celdas[fila + 3][columna + 3])) {
-                    return true;
+                    return celdas[fila][columna];
                 }
 
                 // Diagonal hacia la izquierda
                 if (celdas[fila][columna + 3] != null && celdas[fila][columna + 3].equals(celdas[fila + 1][columna + 2]) &&
                         celdas[fila][columna + 3].equals(celdas[fila + 2][columna + 1]) && celdas[fila][columna + 3].equals(celdas[fila + 3][columna])) {
-                    return true;
+                    return celdas[fila][columna];
                 }
             }
         }
-        return false;
+        return null;
     }
 
+    /**
+     * metodo que comprueba si hay empate y retorna un boolean
+     */
     public boolean hayEmpate() {
         for (int columna = 0; columna < COLUMNAS; columna++) {
             if (celdas[0][columna] == null) {
